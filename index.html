@@ -4,25 +4,85 @@
   <meta charset="UTF-8">
   <title>archive beat</title>
   <style>
-    body { background:#111; color:#fff; font-family:sans-serif; padding:20px }
-    .beat { border-bottom:1px solid #333; padding:10px 0 }
-    audio { width:100%; margin-top:5px }
-    button { margin-right:5px }
-  </style>
+*{box-sizing:border-box}
+body{
+  background:#0b0b0f;
+  color:#f2f2f2;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  margin:0;
+  padding:24px;
+}
+
+h1{
+  font-size:2rem;
+  letter-spacing:.08em;
+  margin-bottom:4px;
+}
+
+p{
+  color:#aaa;
+  margin-top:0;
+}
+
+.controls{
+  margin:20px 0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+
+.beat{
+  background:#14141c;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  transition:.3s;
+}
+
+.beat:hover{
+  transform:translateY(-4px);
+}
+
+.title{
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.sold{
+  display:inline-block;
+  font-size:.75rem;
+  color:#ff6b6b;
+  border:1px solid #ff6b6b;
+  padding:2px 8px;
+  border-radius:999px;
+  margin-bottom:8px;
+  cursor:pointer;
+}
+
+audio{
+  width:100%;
+  margin-top:10px;
+}
+</style>
 </head>
 <body>
 
 <h1>archive beat</h1>
 <p>by alouji</p>
 
-<button onclick="setLang('jp')">JP</button>
-<button onclick="setLang('en')">EN</button>
+<div class="controls">
+  <button onclick="setLang('jp')">JP</button>
+  <button onclick="setLang('en')">EN</button>
+</div>
 
-<h2 data-jp="ビート一覧（30秒視聴）" data-en="Beats (30s preview)">ビート一覧（30秒視聴）</h2>
+<h2 data-jp="ビート一覧" data-en="Beats">ビート一覧</h2>
 
 <input type="file" accept="audio/*" multiple onchange="addBeats(event)">
 
-<div id="beatList"></div>
+<div id="list" class="grid"></div>
 
 <script>
 function setLang(lang){
@@ -35,7 +95,7 @@ function addBeats(e){
   const list = document.getElementById("beatList")
   for(const file of e.target.files){
     const div = document.createElement("div")
-    div.className = "beat"
+    d.className='beat'
 
     const title = document.createElement("div")
     title.textContent = file.name
