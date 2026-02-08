@@ -1,129 +1,191 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>archive beat</title>
-  <style>
+<meta charset="UTF-8">
+<title>archive beat</title>
+
+<style>
 *{box-sizing:border-box}
+
 body{
-  background:#0b0b0f;
-  color:#f2f2f2;
-  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
   margin:0;
-  padding:24px;
+  padding:40px 20px;
+  background:#faf9f6;
+  color:#2b2b2b;
+  font-family:
+    "Hiragino Mincho ProN",
+    "Yu Mincho",
+    "Times New Roman",
+    serif;
+  line-height:1.7;
+}
+
+.container{
+  max-width:900px;
+  margin:0 auto;
 }
 
 h1{
-  font-size:2rem;
-  letter-spacing:.08em;
+  font-size:2.4rem;
+  font-weight:normal;
+  letter-spacing:.12em;
   margin-bottom:4px;
 }
 
-p{
-  color:#aaa;
-  margin-top:0;
+.subtitle{
+  font-size:.9rem;
+  color:#777;
+  margin-bottom:30px;
 }
 
 .controls{
-  margin:20px 0;
+  margin-bottom:30px;
+}
+
+.controls button{
+  background:none;
+  border:1px solid #bbb;
+  padding:6px 14px;
+  margin-right:8px;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+.controls button:hover{
+  background:#eee;
+}
+
+.note{
+  font-size:.85rem;
+  color:#666;
+  margin-bottom:30px;
 }
 
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:16px;
+  gap:24px;
 }
 
 .beat{
-  background:#14141c;
-  border-radius:14px;
-  padding:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  background:#fff;
+  border:1px solid #e2e2e2;
+  padding:18px;
   transition:.3s;
 }
 
 .beat:hover{
-  transform:translateY(-4px);
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
 }
 
 .title{
-  font-weight:600;
+  font-size:1rem;
   margin-bottom:6px;
+}
+
+.meta{
+  font-size:.8rem;
+  color:#777;
+  margin-bottom:10px;
 }
 
 .sold{
   display:inline-block;
-  font-size:.75rem;
-  color:#ff6b6b;
-  border:1px solid #ff6b6b;
+  font-size:.7rem;
+  border:1px solid #999;
   padding:2px 8px;
-  border-radius:999px;
-  margin-bottom:8px;
+  margin-bottom:10px;
   cursor:pointer;
+}
+
+.beat.soldout{
+  opacity:.45;
 }
 
 audio{
   width:100%;
   margin-top:10px;
 }
+
+.footer{
+  margin-top:60px;
+  font-size:.8rem;
+  color:#666;
+}
 </style>
 </head>
+
 <body>
+<div class="container">
 
 <h1>archive beat</h1>
-<p>by alouji</p>
+<div class="subtitle">sound archive by alouji</div>
 
 <div class="controls">
   <button onclick="setLang('jp')">JP</button>
   <button onclick="setLang('en')">EN</button>
 </div>
 
-<h2 data-jp="ビート一覧" data-en="Beats">ビート一覧</h2>
+<div class="note"
+data-jp="非独占 ¥5,000〜 / 独占 ¥30,000〜｜決済：PayPay・銀行振込（DMまで）"
+data-en="Non-exclusive ¥5,000+ / Exclusive ¥30,000+ | Payment via PayPay or Bank Transfer (DM)">
+非独占 ¥5,000〜 / 独占 ¥30,000〜｜決済：PayPay・銀行振込（DMまで）
+</div>
 
 <input type="file" accept="audio/*" multiple onchange="addBeats(event)">
 
 <div id="list" class="grid"></div>
 
+<div class="footer">
+© alouji / archive beat
+</div>
+
+</div>
+
 <script>
-function setLang(lang){
+function setLang(l){
   document.querySelectorAll('[data-jp]').forEach(e=>{
-    e.textContent = e.dataset[lang]
+    e.textContent = e.dataset[l]
   })
 }
 
 function addBeats(e){
-  const list = document.getElementById("beatList")
-  for(const file of e.target.files){
-    const div = document.createElement("div")
-    d.className='beat'
+  for(const f of e.target.files){
 
-    const title = document.createElement("div")
-    title.textContent = file.name
+    const beat=document.createElement('div')
+    beat.className='beat'
 
-    const sold = document.createElement("div")
-    sold.textContent = ""
-    sold.style.color = "red"
-    sold.style.cursor = "pointer"
+    const title=document.createElement('div')
+    title.className='title'
+    title.textContent=f.name
 
-    const audio = document.createElement("audio")
-    audio.controls = true
-    audio.src = URL.createObjectURL(file)
+    const meta=document.createElement('div')
+    meta.className='meta'
+    meta.textContent='BPM: --'
 
-    sold.onclick = ()=>{
-      if(sold.textContent === ""){
-        sold.textContent = "SOLD"
+    const sold=document.createElement('div')
+    sold.className='sold'
+    sold.textContent=''
+
+    const audio=document.createElement('audio')
+    audio.controls=true
+    audio.src=URL.createObjectURL(f)
+
+    sold.onclick=()=>{
+      if(!beat.classList.contains('soldout')){
+        beat.classList.add('soldout')
+        sold.textContent='SOLD'
         audio.pause()
-        audio.style.opacity = 0.4
+        audio.disabled=true
       }else{
-        sold.textContent = ""
-        audio.style.opacity = 1
+        beat.classList.remove('soldout')
+        sold.textContent=''
+        audio.disabled=false
       }
     }
 
-    div.appendChild(title)
-    div.appendChild(sold)
-    div.appendChild(audio)
-    list.appendChild(div)
+    beat.append(title,meta,sold,audio)
+    document.getElementById('list').appendChild(beat)
   }
 }
 </script>
