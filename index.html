@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>archive beat</title>
+  <style>
+    body { background:#111; color:#fff; font-family:sans-serif; padding:20px }
+    .beat { border-bottom:1px solid #333; padding:10px 0 }
+    audio { width:100%; margin-top:5px }
+    button { margin-right:5px }
+  </style>
+</head>
+<body>
+
+<h1>archive beat</h1>
+<p>by alouji</p>
+
+<button onclick="setLang('jp')">JP</button>
+<button onclick="setLang('en')">EN</button>
+
+<h2 data-jp="ビート一覧（30秒視聴）" data-en="Beats (30s preview)">ビート一覧（30秒視聴）</h2>
+
+<input type="file" accept="audio/*" multiple onchange="addBeats(event)">
+
+<div id="beatList"></div>
+
+<script>
+function setLang(lang){
+  document.querySelectorAll('[data-jp]').forEach(e=>{
+    e.textContent = e.dataset[lang]
+  })
+}
+
+function addBeats(e){
+  const list = document.getElementById("beatList")
+  for(const file of e.target.files){
+    const div = document.createElement("div")
+    div.className = "beat"
+
+    const title = document.createElement("div")
+    title.textContent = file.name
+
+    const sold = document.createElement("div")
+    sold.textContent = ""
+    sold.style.color = "red"
+    sold.style.cursor = "pointer"
+
+    const audio = document.createElement("audio")
+    audio.controls = true
+    audio.src = URL.createObjectURL(file)
+
+    sold.onclick = ()=>{
+      if(sold.textContent === ""){
+        sold.textContent = "SOLD"
+        audio.pause()
+        audio.style.opacity = 0.4
+      }else{
+        sold.textContent = ""
+        audio.style.opacity = 1
+      }
+    }
+
+    div.appendChild(title)
+    div.appendChild(sold)
+    div.appendChild(audio)
+    list.appendChild(div)
+  }
+}
+</script>
+
+</body>
+</html>
