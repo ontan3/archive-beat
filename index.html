@@ -10,20 +10,14 @@
 body{
   margin:0;
   padding:40px 20px;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      #f7f6f2,
-      #f7f6f2 2px,
-      #f5f4f0 3px
-    );
+  background:#faf9f6;
   color:#2b2b2b;
   font-family:
     "Hiragino Mincho ProN",
     "Yu Mincho",
     "Times New Roman",
     serif;
-  line-height:1.8;
+  line-height:1.7;
 }
 
 .container{
@@ -34,19 +28,14 @@ body{
 h1{
   font-size:2.4rem;
   font-weight:normal;
-  letter-spacing:.14em;
-  margin-bottom:6px;
+  letter-spacing:.12em;
+  margin-bottom:4px;
 }
 
 .subtitle{
-  font-size:.85rem;
+  font-size:.9rem;
   color:#777;
   margin-bottom:30px;
-}
-
-.statement{
-  font-size:.95rem;
-  margin-bottom:40px;
 }
 
 .controls{
@@ -55,7 +44,7 @@ h1{
 
 .controls button{
   background:none;
-  border:1px solid #aaa;
+  border:1px solid #bbb;
   padding:6px 14px;
   margin-right:8px;
   font-family:inherit;
@@ -75,7 +64,7 @@ h1{
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:26px;
+  gap:24px;
 }
 
 .beat{
@@ -106,6 +95,7 @@ h1{
   border:1px solid #999;
   padding:2px 8px;
   margin-bottom:10px;
+  cursor:pointer;
 }
 
 .beat.soldout{
@@ -118,25 +108,9 @@ audio{
 }
 
 .footer{
-  margin-top:70px;
+  margin-top:60px;
   font-size:.8rem;
   color:#666;
-}
-
-/* 管理者UI */
-.admin{
-  margin:30px 0;
-  display:block;
-  border:2px dashed red;
-}
-
-.admin-btn{
-  position:fixed;
-  bottom:14px;
-  right:16px;
-  font-size:.7rem;
-  opacity:.4;
-  cursor:pointer;
 }
 </style>
 </head>
@@ -146,12 +120,6 @@ audio{
 
 <h1>archive beat</h1>
 <div class="subtitle">sound archive by alouji</div>
-
-<div class="statement"
-data-jp="これは公開されなかったビートの保管庫です。いくつかは、見つけられるためにここにあります。"
-data-en="This is an archive of unreleased beats. Some are meant to be found.">
-これは公開されなかったビートの保管庫です。いくつかは、見つけられるためにここにあります。
-</div>
 
 <div class="controls">
   <button onclick="setLang('jp')">JP</button>
@@ -164,10 +132,7 @@ data-en="Non-exclusive ¥5,000+ / Exclusive ¥30,000+ | Payment via PayPay or Ba
 非独占 ¥5,000〜 / 独占 ¥30,000〜｜決済：PayPay・銀行振込（DMまで）
 </div>
 
-<!-- 管理者だけ見える -->
-<div class="admin" id="adminArea">
-  <input type="file" accept="audio/*" multiple onchange="addBeats(event)">
-</div>
+<input type="file" accept="audio/*" multiple onchange="addBeats(event)">
 
 <div id="list" class="grid"></div>
 
@@ -177,24 +142,11 @@ data-en="Non-exclusive ¥5,000+ / Exclusive ¥30,000+ | Payment via PayPay or Ba
 
 </div>
 
-<div class="admin-btn" onclick="adminLogin()">admin</div>
-
 <script>
-const ADMIN_PASSWORD = "alouji1225"; // ←ここ好きな文字に変えてOK
-
 function setLang(l){
   document.querySelectorAll('[data-jp]').forEach(e=>{
     e.textContent = e.dataset[l]
   })
-}
-
-// 管理者ログイン
-function adminLogin(){
-  const p = prompt("admin password")
-  if(p === ADMIN_PASSWORD){
-    document.getElementById('adminArea').style.display="block"
-    alert("admin mode")
-  }
 }
 
 function addBeats(e){
@@ -209,7 +161,7 @@ function addBeats(e){
 
     const meta=document.createElement('div')
     meta.className='meta'
-    meta.textContent='preview: 30s'
+    meta.textContent='BPM: --'
 
     const sold=document.createElement('div')
     sold.className='sold'
@@ -219,19 +171,17 @@ function addBeats(e){
     audio.controls=true
     audio.src=URL.createObjectURL(f)
 
-    // 30秒で自動停止
-    audio.addEventListener('timeupdate',()=>{
-      if(audio.currentTime>=30){
-        audio.pause()
-        audio.currentTime=0
-      }
-    })
-
     sold.onclick=()=>{
-      beat.classList.add('soldout')
-      sold.textContent='SOLD'
-      audio.pause()
-      audio.disabled=true
+      if(!beat.classList.contains('soldout')){
+        beat.classList.add('soldout')
+        sold.textContent='SOLD'
+        audio.pause()
+        audio.disabled=true
+      }else{
+        beat.classList.remove('soldout')
+        sold.textContent=''
+        audio.disabled=false
+      }
     }
 
     beat.append(title,meta,sold,audio)
